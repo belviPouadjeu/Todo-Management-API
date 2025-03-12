@@ -38,12 +38,28 @@ public class TodoController {
 
     @Operation(
             summary = "Delete a todo item by ID",
-            description = "Delete a specific todo item from the system using its unique identifier. This operation is restricted to admin users.")
+            description = "Delete a specific todo item from the system using its unique identifier. " +
+                    "This operation is restricted to admin users.")
     @DeleteMapping("/admin/todos/{todoId}")
     public ResponseEntity<String> deletetodo(@PathVariable Long todoId){
         try {
             String status = todoService.deleteTodo(todoId);
             return new ResponseEntity<>(status, HttpStatus.OK);
+        }catch (ResponseStatusException e){
+            return new ResponseEntity<>(e.getReason(), e.getStatusCode());
+        }
+    }
+
+    @Operation(
+            summary = "Update a todo item by ID",
+            description = "Update an existing todo item using its unique identifier. " +
+                    "The request body should include the updated title, description, and status of the todo.")
+    @PutMapping("/admin/todos/{todoId}")
+    public ResponseEntity<String> updateTodo(@RequestBody Todo todo,
+                                             @PathVariable Long todoId){
+        try {
+            Todo savedTodo = todoService.updateTodo(todo, todoId);
+            return new ResponseEntity<>("Todo with todoId : " + todoId, HttpStatus.OK);
         }catch (ResponseStatusException e){
             return new ResponseEntity<>(e.getReason(), e.getStatusCode());
         }
