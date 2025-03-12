@@ -1,6 +1,7 @@
 package com.belvi.todo.controller;
 
 import com.belvi.todo.model.Todo;
+import com.belvi.todo.service.TodoService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,24 +11,23 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class TodoController {
-    private List<Todo> todos = new ArrayList<>();
+    private final TodoService todoService;
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "Hello, Spring Boot with Swagger!";
+    public TodoController(TodoService todoService) {
+        this.todoService = todoService;
     }
 
     @Operation(summary = "Get all Todos", description = "Returns a list of all todo items")
     @GetMapping("/public/todos")
     public List<Todo> getAllTodos(){
-        return todos;
+        return todoService.getAllTodos();
 
     }
-    
+
     @Operation(summary = "Add todo", description = "Returns a list of all todo items")
     @PostMapping("/public/todos")
     public String addTodo(@RequestBody Todo todo){
-        todos.add(todo);
+        todoService.addTodo(todo);
         return "Todo added successfully";
     }
 }
