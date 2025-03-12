@@ -24,10 +24,19 @@ public class TodoController {
 
     }
 
-    @Operation(summary = "Add todo", description = "Returns a list of all todo items")
+    @Operation(summary = "Add todo",
+            description = "Create a new todo item with the provided details. The request body should include the title, description, and status of the todo.")
     @PostMapping("/public/todos")
     public String addTodo(@RequestBody Todo todo){
         todoService.addTodo(todo);
         return "Todo added successfully";
+    }
+
+    @Operation(
+            summary = "Delete a todo item by ID",
+            description = "Delete a specific todo item from the system using its unique identifier. This operation is restricted to admin users.")
+    @DeleteMapping("/admin/todos/{todoId}")
+    public String deletetodo(@PathVariable Long todoId){
+        return todoService.deleteTodo(todoId);
     }
 }
