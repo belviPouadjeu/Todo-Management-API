@@ -26,7 +26,11 @@ public class Todo {
     @Size(min = 5, max = 100, message = "Todo description must contain at least five characters and not exceed 100")
     @NotBlank
     private String description;
+
+    @NotBlank
     private String status;
     // status : done, in progress, to do
 
 }
+
+// http://localhost:8080/swagger-ui.html

@@ -24,13 +24,26 @@ public class TodoServiceImpl implements TodoService {
     public List<Todo> getAllTodos() {
         return todoRepository.findAll();
     }
-
     @Override
+    public void addTodo(Todo todo) {
+        String status = todo.getStatus().toString();
+
+        if (!status.equalsIgnoreCase("To do") &&
+                !status.equalsIgnoreCase("In progress") &&
+                !status.equalsIgnoreCase("Done")) {
+            throw new IllegalArgumentException("Invalid status. Allowed values are: 'To do', 'In progress', 'Done'.");
+        }
+
+        todoRepository.save(todo);
+    }
+
+
+    /*@Override
     public void addTodo(Todo todo) {
         //todo.setTodId(nextId++);
         todoRepository.save(todo);
 
-    }
+    }*/
 
     @Override
     public String deleteTodo(Long todoId) {

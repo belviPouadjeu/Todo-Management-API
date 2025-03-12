@@ -3,6 +3,7 @@ package com.belvi.todo.controller;
 import com.belvi.todo.model.Todo;
 import com.belvi.todo.service.TodoService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +30,11 @@ public class TodoController {
     }
 
     @Operation(summary = "Add todo",
-            description = "Create a new todo item with the provided details. The request body should include the title, description, and status of the todo.")
+            description = "Create a new todo item with the provided details. " +
+                    "The request body should include the title, description, and status of the todo. " +
+                    "The status must be To do, In progress or Done.")
     @PostMapping("/public/todos")
-    public ResponseEntity<String> addTodo(@RequestBody Todo todo){
+    public ResponseEntity<String> addTodo(@Valid @RequestBody Todo todo){
         todoService.addTodo(todo);
         return new ResponseEntity<>("Todo added successfully", HttpStatus.CREATED);
     }
@@ -55,7 +58,7 @@ public class TodoController {
             description = "Update an existing todo item using its unique identifier. " +
                     "The request body should include the updated title, description, and status of the todo.")
     @PutMapping("/admin/todos/{todoId}")
-    public ResponseEntity<String> updateTodo(@RequestBody Todo todo,
+    public ResponseEntity<String> updateTodo(@Valid @RequestBody Todo todo,
                                              @PathVariable Long todoId){
         try {
             Todo savedTodo = todoService.updateTodo(todo, todoId);
