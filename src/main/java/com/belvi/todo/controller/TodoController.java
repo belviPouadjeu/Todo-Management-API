@@ -3,7 +3,10 @@ package com.belvi.todo.controller;
 import com.belvi.todo.model.Todo;
 import com.belvi.todo.service.TodoService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,24 +22,30 @@ public class TodoController {
 
     @Operation(summary = "Get all Todos", description = "Returns a list of all todo items")
     @GetMapping("/public/todos")
-    public List<Todo> getAllTodos(){
-        return todoService.getAllTodos();
+    public ResponseEntity<List<Todo>> getAllTodos(){
+        List<Todo> todos = todoService.getAllTodos();
+        return new ResponseEntity<>(todos, HttpStatus.OK);
 
     }
 
     @Operation(summary = "Add todo",
             description = "Create a new todo item with the provided details. The request body should include the title, description, and status of the todo.")
     @PostMapping("/public/todos")
-    public String addTodo(@RequestBody Todo todo){
+    public ResponseEntity<String> addTodo(@RequestBody Todo todo){
         todoService.addTodo(todo);
-        return "Todo added successfully";
+        return new ResponseEntity<>("Todo added successfully", HttpStatus.CREATED);
     }
 
     @Operation(
             summary = "Delete a todo item by ID",
             description = "Delete a specific todo item from the system using its unique identifier. This operation is restricted to admin users.")
     @DeleteMapping("/admin/todos/{todoId}")
-    public String deletetodo(@PathVariable Long todoId){
-        return todoService.deleteTodo(todoId);
+    public ResponseEntity<String> deletetodo(@PathVariable Long todoId){
+        try {
+            String status = todoService.deleteTodo(todoId);
+            return new ResponseEntity<>(status, HttpStatus.OK);
+        }catch (ResponseStatusException e){
+            return new ResponseEntity<>(e.getReason(), e.getStatusCode());
+        }
     }
 }
