@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TodoServiceImpl implements TodoService {
@@ -35,5 +36,21 @@ public class TodoServiceImpl implements TodoService {
 
         todos.remove(todo);
         return "Todo with todoId " + todoId + " deleted successfully";
+    }
+
+    @Override
+    public Todo updateTodo(Todo todo, Long todoId) {
+        Optional<Todo> optionalTodo = todos.stream()
+                .filter(t -> t.getTodId().equals(todoId))
+                .findFirst();
+
+        if (optionalTodo.isPresent()){
+            Todo existingTodo = optionalTodo.get();
+            return existingTodo;
+
+        }else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found");
+        }
+
     }
 }
