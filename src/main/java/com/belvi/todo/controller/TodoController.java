@@ -1,6 +1,5 @@
 package com.belvi.todo.controller;
 
-import com.belvi.todo.model.Todo;
 import com.belvi.todo.payload.TodoDTO;
 import com.belvi.todo.payload.TodoResponse;
 import com.belvi.todo.service.TodoService;
@@ -46,6 +45,11 @@ public class TodoController {
                                              @PathVariable Long todoId){
         TodoDTO savedTodoDTO = todoService.updateTodo(todoDTO, todoId);
         return new ResponseEntity<>(savedTodoDTO, HttpStatus.OK);
+    }
 
+    @GetMapping("/public/todos/status")
+    public ResponseEntity<TodoResponse> getTodoByStatus(@RequestParam String status) {
+        TodoResponse todos = todoService.getTodoByStatus(status);
+        return new ResponseEntity<>(todos, HttpStatus.OK);
     }
 }

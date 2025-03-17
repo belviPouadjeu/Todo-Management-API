@@ -10,4 +10,6 @@ public interface TodoService {
     TodoDTO addTodo(TodoDTO todoDTO);
     TodoDTO deleteTodo(Long todoId);
     TodoDTO updateTodo(TodoDTO todoDTO, Long todoId);
+
+    TodoResponse getTodoByStatus(String status);
 }

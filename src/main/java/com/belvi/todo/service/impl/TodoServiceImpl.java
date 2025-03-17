@@ -94,4 +94,28 @@ public class TodoServiceImpl implements TodoService {
         return modelMapper.map(savedTodo, TodoDTO.class);
 
     }
+
+    @Override
+    public TodoResponse getTodoByStatus(String status) {
+        // Valider le statut
+        if (!status.equalsIgnoreCase("To do") &&
+                !status.equalsIgnoreCase("In progress") &&
+                !status.equalsIgnoreCase("Done")) {
+            throw new IllegalArgumentException("Invalid status. Allowed values are: 'To do', 'In progress', 'Done'.");
+        }
+
+        // Récupérer les todos depuis le repository
+        List<Todo> todos = todoRepository.findByStatus(status);
+        if (todos.isEmpty()) {
+            throw new APIException("No todos found with status: " + status);
+        }
+
+        // Convertir les entités Todo en TodoDTO
+        List<TodoDTO> todoDTOs = todos.stream()
+                .map(todo -> modelMapper.map(todo, TodoDTO.class))
+                .collect(Collectors.toList());
+
+        // Retourner une TodoResponse contenant les TodoDTO
+        return new TodoResponse(todoDTOs);
+    }
 }
