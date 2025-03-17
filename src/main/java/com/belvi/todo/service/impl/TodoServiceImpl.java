@@ -1,5 +1,6 @@
 package com.belvi.todo.service.impl;
 
+import com.belvi.todo.execeptions.APIException;
 import com.belvi.todo.execeptions.ResourceNotFoundException;
 import com.belvi.todo.model.Todo;
 import com.belvi.todo.repository.TodoRepository;
@@ -28,6 +29,10 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public void addTodo(Todo todo) {
         String status = todo.getStatus().toString();
+        Todo savedTodo= todoRepository.findByTitle(todo.getTitle());
+        if (savedTodo != null){
+            throw new APIException("Todo with the name " + todo.getTitle() + " Already exists !!");
+        }
 
         if (!status.equalsIgnoreCase("To do") &&
                 !status.equalsIgnoreCase("In progress") &&
@@ -37,14 +42,6 @@ public class TodoServiceImpl implements TodoService {
 
         todoRepository.save(todo);
     }
-
-
-    /*@Override
-    public void addTodo(Todo todo) {
-        //todo.setTodId(nextId++);
-        todoRepository.save(todo);
-
-    }*/
 
     @Override
     public String deleteTodo(Long todoId) {
