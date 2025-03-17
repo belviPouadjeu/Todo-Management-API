@@ -1,5 +1,6 @@
 package com.belvi.todo.service.impl;
 
+import com.belvi.todo.execeptions.ResourceNotFoundException;
 import com.belvi.todo.model.Todo;
 import com.belvi.todo.repository.TodoRepository;
 import com.belvi.todo.service.TodoService;
@@ -48,7 +49,7 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public String deleteTodo(Long todoId) {
         Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Todo", "TodoId", todoId));
 
         todoRepository.delete(todo);
         return "Todo with todoId : " + todoId + " deleted sucessfully";
@@ -57,7 +58,7 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public Todo updateTodo(Todo todo, Long todoId) {
         Todo savedTodo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Todo", "TodoId", todoId));
 
         todo.setTodId(todoId);
         savedTodo = todoRepository.save(todo);
