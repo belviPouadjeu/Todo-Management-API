@@ -24,8 +24,15 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public List<Todo> getAllTodos() {
-        return todoRepository.findAll();
+        List<Todo> todos = todoRepository.findAll();
+        if (todos.isEmpty()){
+            throw new APIException("No todo added until now . ");
+        }
+        return  todos;
+
     }
+
+
     @Override
     public void addTodo(Todo todo) {
         String status = todo.getStatus().toString();
