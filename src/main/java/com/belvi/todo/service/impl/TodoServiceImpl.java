@@ -46,23 +46,36 @@ public class TodoServiceImpl implements TodoService {
     }
 
 
+    private String normalizeStatus(String status) {
+        if (status == null) {
+            throw new IllegalArgumentException("Status cannot be null. Allowed values are: 'To do', 'In progress', 'Done'.");
+        }
+
+        // Supprimer les espaces et convertir en minuscules
+        String normalized = status.trim().toLowerCase();
+
+        // Comparer avec les valeurs acceptées (en minuscules)
+        switch (normalized) {
+            case "to do":
+                return "To do";
+            case "in progress":
+                return "In progress";
+            case "done":
+                return "Done";
+            default:
+                throw new IllegalArgumentException("Invalid status. Allowed values are: 'To do', 'In progress', 'Done'.");
+        }
+    }
+
     @Override
     public TodoDTO addTodo(TodoDTO todoDTO) {
         Todo todo = modelMapper.map(todoDTO, Todo.class);
 
-        if (todo.getStatus() == null) {
-            throw new IllegalArgumentException("Status cannot be null. Allowed values are: 'To do', 'In progress', 'Done'.");
-        }
-
-        String status = todo.getStatus().toString();
+        // Normaliser le statut
+        String status = normalizeStatus(todo.getStatus());
+        todo.setStatus(status);
 
         Todo todoFromDb = todoRepository.findByTitle(todo.getTitle());
-
-        if (!status.equalsIgnoreCase("To do") &&
-                !status.equalsIgnoreCase("In progress") &&
-                !status.equalsIgnoreCase("Done")) {
-            throw new IllegalArgumentException("Invalid status. Allowed values are: 'To do', 'In progress', 'Done'.");
-        }
 
         if (todoFromDb != null) {
             throw new APIException("Todo with the name " + todo.getTitle() + " Already exists !!");
@@ -87,27 +100,32 @@ public class TodoServiceImpl implements TodoService {
         Todo savedTodo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Todo", "TodoId", todoId));
 
+        // Mappage de todoDTO à Todo
         Todo todo = modelMapper.map(todoDTO, Todo.class);
 
-        todo.setTodId(todoId);
-        savedTodo = todoRepository.save(todo);
-        return modelMapper.map(savedTodo, TodoDTO.class);
+        // Normaliser le statut
+        String status = normalizeStatus(todo.getStatus());
+        todo.setStatus(status);
 
+        // Mettre à jour l'ID de la todo
+        todo.setTodId(todoId);
+
+        // Enregistrer le Todo mis à jour
+        savedTodo = todoRepository.save(todo);
+
+        return modelMapper.map(savedTodo, TodoDTO.class);
     }
+
 
     @Override
     public TodoResponse getTodoByStatus(String status) {
-        // Valider le statut
-        if (!status.equalsIgnoreCase("To do") &&
-                !status.equalsIgnoreCase("In progress") &&
-                !status.equalsIgnoreCase("Done")) {
-            throw new IllegalArgumentException("Invalid status. Allowed values are: 'To do', 'In progress', 'Done'.");
-        }
+        // Normaliser le statut
+        String normalizedStatus = normalizeStatus(status);
 
         // Récupérer les todos depuis le repository
-        List<Todo> todos = todoRepository.findByStatus(status);
+        List<Todo> todos = todoRepository.findByStatus(normalizedStatus);
         if (todos.isEmpty()) {
-            throw new APIException("No todos found with status: " + status);
+            throw new APIException("No todos found with status: " + normalizedStatus);
         }
 
         // Convertir les entités Todo en TodoDTO
@@ -118,4 +136,5 @@ public class TodoServiceImpl implements TodoService {
         // Retourner une TodoResponse contenant les TodoDTO
         return new TodoResponse(todoDTOs);
     }
+
 }
