@@ -130,12 +130,6 @@ mvn clean package
 java -jar target/todo-0.0.1-SNAPSHOT.jar
 ```
 
-### Docker (optional):
-
-```bash
-docker build -t todo-api .
-docker run -p 8080:8080 todo-api
-```
 
 ## Contributing 🤝
 1. Fork the project
