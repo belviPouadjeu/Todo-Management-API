@@ -111,6 +111,9 @@ curl "http://localhost:8081/api/public/todos/status?status=In%20progress"
 mvn test
 ```
 
+## Json file documentation : 
+`http://localhost:8081/v3/api-docs`
+
 ### Run integration tests (requires test DB):
 
 ```bash
