@@ -45,8 +45,8 @@ A robust REST API for managing todo items built with Spring Boot, JPA, and Postg
 ## Installation 🛠️
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/todo-api.git
-   cd todo-api
+   git@github.com:belviPouadjeu/Todo-Management-API.git
+   cd Todo-Management-API
 
 ## Build the project:
 
